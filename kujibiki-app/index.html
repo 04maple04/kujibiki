@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>くじ引きアプリ</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #74b9ff, #a29bfe);
+            padding: 50px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        button {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            background-color: #e84118;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        #result {
+            margin-top: 30px;
+            font-size: 32px;
+            font-weight: bold;
+            color: #2f3542;
+            min-height: 48px;
+            transition: transform 0.1s;
+        }
+        .shake {
+            animation: blink 0.1s infinite alternate;
+        }
+        @keyframes blink {
+            0% { opacity: 0.5; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1.05); }
+        }
+        .probability-info {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #747d8c;
+            text-align: left;
+        }
+        .probability-info table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .probability-info th, .probability-info td {
+            border-bottom: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>くじ引き</h2>
+    <button id="draw-btn" onclick="startLottery()">押せ！</button>
+    <div id="result">？？？</div>
+
+    <div class="probability-info">
+        <p>【現在の設定】</p>
+        <table>
+            <tr>
+                <th>効果</th>
+                <th>確率</th>
+            </tr>
+            <tr>
+                <td>赤単色を2倍</td>
+                <td>3%</td>
+            </tr>
+            <tr>
+                <td>黒単色を2倍</td>
+                <td>3%</td>
+            </tr>
+            <tr>
+                <td>お互い追加2枚</td>
+                <td>3%</td>
+            </tr>
+			<tr>
+                <td>同値の場合貫通</td>
+                <td>3%</td>
+            </tr>
+			<tr>
+                <td>鬼タイム</td>
+                <td>3%</td>
+            </tr>
+			<tr>
+                <td>ハイパーモード</td>
+                <td>3%</td>
+            </tr>
+			<tr>
+                <td>コスト×1000</td>
+                <td>3%</td>
+            </tr>
+			<tr>
+                <td>プラス効果参照</td>
+                <td>3%</td>
+            </tr>
+			<tr>
+                <td>マイナス効果参照</td>
+                <td>3%</td>
+            </tr>
+			<tr>
+                <td>攻守入れ替え</td>
+                <td>3%</td>
+            </tr>
+            <tr>
+                <td>はずれ</td>
+                <td>70%</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script>
+// 1. 景品・当選確率・音源ファイル・音の鳴る確率の設定
+const PRIZES = [
+    { name: "赤単色を2倍", weight: 3,  sound: "bare.mp3", soundChance: 50 },
+    { name: "黒単色を2倍", weight: 3,  sound: "bare.mp3",    soundChance: 50 },
+    { name: "お互い追加2枚", weight: 3, sound: "bare.mp3",    soundChance: 50 },
+	{ name: "同値の場合貫通", weight: 3, sound: "bare.mp3",    soundChance: 50 },
+	{ name: "鬼タイム", weight: 3, sound: "bare.mp3",    soundChance: 50 },
+	{ name: "ハイパーモード", weight: 3, sound: "bare.mp3",    soundChance: 50 },
+	{ name: "コスト×1000", weight: 3, sound: "bare.mp3",    soundChance: 50 },
+	{ name: "プラス効果参照", weight: 3, sound: "bare.mp3",    soundChance: 50 },
+	{ name: "マイナス効果参照", weight: 3, sound: "bare.mp3",    soundChance: 50 },
+	{ name: "攻守入れ替え", weight: 3, sound: "bare.mp3",    soundChance: 50 },
+    { name: "💀 はずれ 💀", weight: 70, sound: "",  soundChance: 0 }
+];
+
+function startLottery() {
+    const btn = document.getElementById("draw-btn");
+    const resultDiv = document.getElementById("result");
+    
+    // 連打防止と演出開始
+    btn.disabled = true;
+    resultDiv.classList.add("shake");
+
+    // ★★★ 先に今回の抽選結果を決めて、ボタンを押した瞬間に音を鳴らす ★★★
+    const selectedPrizeData = getLotteryResultData();
+
+    if (selectedPrizeData && selectedPrizeData.sound) {
+        // 1〜100の乱数を発生
+        const soundRoll = Math.floor(Math.random() * 100) + 1;
+        
+        // 設定された soundChance（％）以下なら【今すぐ】音を鳴らす
+        if (soundRoll <= selectedPrizeData.soundChance) {
+            const audio = new Audio(selectedPrizeData.sound);
+            audio.play().catch(error => {
+                console.log("音声再生に失敗しました:", error);
+            });
+        }
+    }
+    // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+    // 演出：2秒間、50ミリ秒ごとにランダムシャッフル表示
+    const shuffleInterval = setInterval(() => {
+        const randomIdx = Math.floor(Math.random() * PRIZES.length);
+        resultDiv.innerText = PRIZES[randomIdx].name;
+    }, 50);
+	
+
+    // 2秒（2000ミリ秒）後に停止して結果発表
+    setTimeout(() => {
+        clearInterval(shuffleInterval);
+        resultDiv.classList.remove("shake");
+        
+        // すでに決まっている結果の名前を画面に表示する
+        if (selectedPrizeData) {
+            resultDiv.innerText = selectedPrizeData.name;
+        } else {
+            resultDiv.innerText = "エラーが発生しました";
+        }
+
+        // ボタンのロックを解除
+        btn.disabled = false;
+    }, 3000); 
+}
+
+// 抽選を行い、当選した結果のオブジェクトを返す関数
+function getLotteryResultData() {
+    const randomNumber = Math.floor(Math.random() * 100) + 1;
+    let currentWeightSum = 0;
+
+    for (const prize of PRIZES) {
+        currentWeightSum += prize.weight;
+        if (randomNumber <= currentWeightSum) {
+            return prize; 
+        }
+    }
+    return null;
+}
+</script>
+
+</body>
+</html>
