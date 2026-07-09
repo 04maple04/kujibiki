@@ -102,10 +102,26 @@
             </tr>
             <tr>
                 <td>赤単色を2倍</td>
-                <td>3%</td>
+                <td>2%</td>
             </tr>
             <tr>
                 <td>黒単色を2倍</td>
+                <td>2%</td>
+            </tr>
+            <tr>
+                <td>多色を2倍</td>
+                <td>2%</td>
+            </tr>
+            <tr>
+                <td>年数×1000</td>
+                <td>2%</td>
+            </tr>
+            <tr>
+                <td>Sトリガーなら2倍</td>
+                <td>2%</td>
+            </tr>
+            <tr>
+                <td>青単色を2倍</td>
                 <td>3%</td>
             </tr>
             <tr>
@@ -137,12 +153,16 @@
                 <td>3%</td>
             </tr>
 			<tr>
-                <td>攻守入れ替え</td>
+                <td>カード交換</td>
+                <td>3%</td>
+            </tr>
+			<tr>
+                <td>ヨビ二オンなら追加1枚</td>
                 <td>3%</td>
             </tr>
             <tr>
                 <td>はずれ</td>
-                <td>70%</td>
+                <td>60%</td>
             </tr>
         </table>
     </div>
@@ -151,8 +171,12 @@
 <script>
 // 1. 景品・当選確率・音源ファイル・音の鳴る確率の設定
 const PRIZES = [
-    { name: "赤単色を2倍", weight: 3,  sound: "bare.mp3", soundChance: 50 },
-    { name: "黒単色を2倍", weight: 3,  sound: "bare.mp3",    soundChance: 50 },
+    { name: "赤単色を2倍", weight: 2,  sound: "bare.mp3", soundChance: 50 },
+    { name: "黒単色を2倍", weight: 2,  sound: "bare.mp3",    soundChance: 50 },
+    { name: "多色を2倍", weight: 2,  sound: "bare.mp3",    soundChance: 50 },
+    { name: "年数×1000", weight: 2, sound: "bare.mp3",    soundChance: 50 },
+    { name: "Sトリガーなら2倍", weight: 2, sound: "bare.mp3",    soundChance: 50 },
+    { name: "青単色を2倍", weight: 3, sound: "bare.mp3",    soundChance: 50 },
     { name: "お互い追加2枚", weight: 3, sound: "bare.mp3",    soundChance: 50 },
 	{ name: "同値の場合貫通", weight: 3, sound: "bare.mp3",    soundChance: 50 },
 	{ name: "鬼タイム", weight: 3, sound: "bare.mp3",    soundChance: 50 },
@@ -160,8 +184,9 @@ const PRIZES = [
 	{ name: "コスト×1000", weight: 3, sound: "bare.mp3",    soundChance: 50 },
 	{ name: "プラス効果参照", weight: 3, sound: "bare.mp3",    soundChance: 50 },
 	{ name: "マイナス効果参照", weight: 3, sound: "bare.mp3",    soundChance: 50 },
-	{ name: "攻守入れ替え", weight: 3, sound: "bare.mp3",    soundChance: 50 },
-    { name: "💀 はずれ 💀", weight: 70, sound: "",  soundChance: 0 }
+	{ name: "カード交換", weight: 3, sound: "bare.mp3",    soundChance: 50 },
+	{ name: "ヨビ二オンなら追加1枚", weight: 3, sound: "bare.mp3",    soundChance: 50 },
+    { name: "💀 はずれ 💀", weight: 60, sound: "",  soundChance: 0 }
 ];
 
 function startLottery() {
