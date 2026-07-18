@@ -70,7 +70,36 @@
             padding: 8px;
             text-align: left;
         }
+		.special-background {
+			animation: specialFlash 0.4s infinite alternate;
+		}
 
+		@keyframes specialFlash {
+
+			0% {
+				background: linear-gradient(135deg,#ff0000,#ffff00);
+			}
+
+			100% {
+				background: linear-gradient(135deg,#00ffff,#0000ff);
+			}
+
+		}
+		
+		#screen-flash {
+		position: fixed;
+		inset: 0;
+		background: black;
+		opacity: 0;
+		pointer-events: none;
+		z-index: 9999;
+		transition: opacity 0.1s;
+		}
+
+		#screen-flash.active {
+			opacity: 1.0;
+		}
+		
         /* スマホ用の調整（画面幅が480px以下のとき） */
         @media (max-width: 480px) {
             body {
@@ -91,166 +120,511 @@
     <h2>くじ引き</h2>
     <button id="draw-btn" onclick="startLottery()">押せ！</button>
     <div id="result">？？？</div>
-
-    <div class="probability-info">
+	<div class="probability-info">
 		<a target="_blank" href="https://stock-manager-nine-eta.vercel.app/">集計サイト</a>
-        <p>【現在の設定】</p>
-        <table>
-            <tr>
-                <th>効果</th>
-                <th>確率</th>
-            </tr>
-            <tr>
-                <td>赤単色を2倍</td>
-                <td>2%</td>
-            </tr>
-            <tr>
-                <td>黒単色を2倍</td>
-                <td>2%</td>
-            </tr>
-            <tr>
-                <td>多色を2倍</td>
-                <td>2%</td>
-            </tr>
-            <tr>
-                <td>年数×1000</td>
-                <td>2%</td>
-            </tr>
-            <tr>
-                <td>Sトリガーなら2倍</td>
-                <td>2%</td>
-            </tr>
-            <tr>
-                <td>青単色を2倍</td>
-                <td>3%</td>
-            </tr>
-            <tr>
-                <td>お互い追加2枚</td>
-                <td>3%</td>
-            </tr>
-			<tr>
-                <td>同値の場合貫通</td>
-                <td>3%</td>
-            </tr>
-			<tr>
-                <td>鬼タイム</td>
-                <td>3%</td>
-            </tr>
-			<tr>
-                <td>ハイパーモード</td>
-                <td>3%</td>
-            </tr>
-			<tr>
-                <td>コスト×1000</td>
-                <td>3%</td>
-            </tr>
-			<tr>
-                <td>プラス効果参照</td>
-                <td>3%</td>
-            </tr>
-			<tr>
-                <td>マイナス効果参照</td>
-                <td>3%</td>
-            </tr>
-			<tr>
-                <td>カード交換</td>
-                <td>3%</td>
-            </tr>
-			<tr>
-                <td>ヨビ二オンなら追加1枚</td>
-                <td>3%</td>
-            </tr>
-            <tr>
-                <td>はずれ</td>
-                <td>60%</td>
-            </tr>
-        </table>
-    </div>
+		<p>【現在の設定】</p>
+
+		<table id="probability-table">
+			<thead>
+				<tr>
+					<th>効果</th>
+					<th>確率</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+	<div id="screen-flash"></div>
 </div>
 
 <script>
-// 1. 景品・当選確率・音源ファイル・音の鳴る確率の設定
+
+
+// ================================
+// 景品設定
+// ================================
 const PRIZES = [
-    { name: "赤単色を2倍", weight: 2,  sound: "bare.mp3", soundChance: 50 },
-    { name: "黒単色を2倍", weight: 2,  sound: "bare.mp3",    soundChance: 50 },
-    { name: "多色を2倍", weight: 2,  sound: "bare.mp3",    soundChance: 50 },
-    { name: "年数×1000", weight: 2, sound: "bare.mp3",    soundChance: 50 },
-    { name: "Sトリガーなら2倍", weight: 2, sound: "bare.mp3",    soundChance: 50 },
-    { name: "青単色を2倍", weight: 3, sound: "bare.mp3",    soundChance: 50 },
-    { name: "お互い追加2枚", weight: 3, sound: "bare.mp3",    soundChance: 50 },
-	{ name: "同値の場合貫通", weight: 3, sound: "bare.mp3",    soundChance: 50 },
-	{ name: "鬼タイム", weight: 3, sound: "bare.mp3",    soundChance: 50 },
-	{ name: "ハイパーモード", weight: 3, sound: "bare.mp3",    soundChance: 50 },
-	{ name: "コスト×1000", weight: 3, sound: "bare.mp3",    soundChance: 50 },
-	{ name: "プラス効果参照", weight: 3, sound: "bare.mp3",    soundChance: 50 },
-	{ name: "マイナス効果参照", weight: 3, sound: "bare.mp3",    soundChance: 50 },
-	{ name: "カード交換", weight: 3, sound: "bare.mp3",    soundChance: 50 },
-	{ name: "ヨビ二オンなら追加1枚", weight: 3, sound: "bare.mp3",    soundChance: 50 },
-    { name: "💀 はずれ 💀", weight: 60, sound: "",  soundChance: 0 }
+    { name: "赤単色を2倍", weight: 2.0,isLose: false },
+    { name: "黒単色を2倍", weight: 2.0,isLose: false },
+    { name: "多色を2倍", weight: 2.0,isLose: false },
+    { name: "年数×1000", weight: 2.0,isLose: false },
+    { name: "Sトリガーなら2倍", weight: 2.0,isLose: false },
+    { name: "青単色を2倍", weight: 3.0,isLose: false },
+    { name: "お互い追加2枚", weight: 3.0,isLose: false },
+    { name: "同値の場合貫通", weight: 3.0,isLose: false },
+    { name: "鬼タイム", weight: 3.0,isLose: false },
+    { name: "ハイパーモード", weight: 3.0,isLose: false },
+    { name: "コスト×1000", weight: 3.0,isLose: false },
+    { name: "プラス効果参照", weight: 3.0,isLose: false },
+    { name: "マイナス効果参照", weight: 3.0,isLose: false },
+    { name: "カード交換", weight: 3.0,isLose: false },
+    { name: "ヨビ二オンなら追加1枚", weight: 3.0,isLose: false },
+    { name: "💀 はずれ 💀", weight: 60.0 ,isLose: true}
 ];
 
-function startLottery() {
-    const btn = document.getElementById("draw-btn");
-    const resultDiv = document.getElementById("result");
-    
-    // 連打防止と演出開始
-    btn.disabled = true;
-    resultDiv.classList.add("shake");
 
-    // ★★★ 先に今回の抽選結果を決めて、ボタンを押した瞬間に音を鳴らす ★★★
-    const selectedPrizeData = getLotteryResultData();
 
-    if (selectedPrizeData && selectedPrizeData.sound) {
-        // 1〜100の乱数を発生
-        const soundRoll = Math.floor(Math.random() * 100) + 1;
-        
-        // 設定された soundChance（％）以下なら【今すぐ】音を鳴らす
-        if (soundRoll <= selectedPrizeData.soundChance) {
-            const audio = new Audio(selectedPrizeData.sound);
-            audio.play().catch(error => {
-                console.log("音声再生に失敗しました:", error);
-            });
-        }
-    }
-    // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+// ================================
+// 確率表を作成
+// ================================
+function createProbabilityTable() {
 
-    // 演出：2秒間、50ミリ秒ごとにランダムシャッフル表示
-    const shuffleInterval = setInterval(() => {
-        const randomIdx = Math.floor(Math.random() * PRIZES.length);
-        resultDiv.innerText = PRIZES[randomIdx].name;
-    }, 50);
-	
+    const tbody = document.querySelector("#probability-table tbody");
+    tbody.innerHTML = "";
 
-    // 2秒（2000ミリ秒）後に停止して結果発表
-    setTimeout(() => {
-        clearInterval(shuffleInterval);
-        resultDiv.classList.remove("shake");
-        
-        // すでに決まっている結果の名前を画面に表示する
-        if (selectedPrizeData) {
-            resultDiv.innerText = selectedPrizeData.name;
-        } else {
-            resultDiv.innerText = "エラーが発生しました";
-        }
+    const totalWeight = PRIZES.reduce(
+        (sum, prize) => sum + prize.weight,
+        0
+    );
 
-        // ボタンのロックを解除
-        btn.disabled = false;
-    }, 3000); 
+    PRIZES.forEach(prize => {
+
+        const row = document.createElement("tr");
+
+        const effectCell = document.createElement("td");
+        effectCell.textContent = prize.name;
+
+        const probabilityCell = document.createElement("td");
+
+        const probability =
+            (prize.weight / totalWeight * 100);
+
+        probabilityCell.textContent =
+            probability.toFixed(2).replace(/\.?0+$/, "") + "%";
+
+        row.appendChild(effectCell);
+        row.appendChild(probabilityCell);
+
+        tbody.appendChild(row);
+    });
+
 }
 
-// 抽選を行い、当選した結果のオブジェクトを返す関数
+// ================================
+// 抽選処理
+// ================================
 function getLotteryResultData() {
-    const randomNumber = Math.floor(Math.random() * 100) + 1;
+
+    const totalWeight =
+        PRIZES.reduce((sum, prize) => sum + prize.weight, 0);
+
+    const randomNumber =
+        Math.random() * totalWeight;
+
     let currentWeightSum = 0;
 
     for (const prize of PRIZES) {
+
         currentWeightSum += prize.weight;
-        if (randomNumber <= currentWeightSum) {
-            return prize; 
+
+        if (randomNumber < currentWeightSum) {
+            return prize;
         }
     }
-    return null;
+
+    return PRIZES[PRIZES.length - 1];
 }
+
+// ================================
+// 演出設定
+// ================================
+
+// ================================
+// 通常演出
+// ================================
+const NORMAL_EFFECTS = [
+    {
+        type: "sound",
+        enabled: true,
+        chance: 40,
+        file: "bare.mp3"
+    },
+    {
+        type: "longAnimation",
+        enabled: true,
+        chance: 30,
+        duration: 6000
+    },
+    {
+        type: "background",
+        enabled: true,
+        chance: 30,
+        className: "special-background"
+    },
+    {
+        type: "flash",
+        enabled: true,
+        chance: 20,
+        duration: 2000,
+        sound: "flash.mp3"
+    }
+];
+
+function startNormalEffects(effects) {
+
+    playSoundEffect(effects);
+
+    playFlashEffect(effects);
+
+    applyBackgroundEffect(effects);
+
+}
+
+function stopNormalEffects(effects) {
+
+    removeBackgroundEffect(effects);
+
+}
+
+// ================================
+// 特殊演出
+// ================================
+const SPECIAL_EFFECTS = [
+    {
+        type: "revival",
+        enabled: true,
+        chance: 10
+    }
+];
+
+function playSpecialEffect(
+    specialEffect,
+    resultDiv,
+    prize,
+    callback
+) {
+
+    if (!specialEffect) {
+        showResult(resultDiv, prize);
+        callback();
+        return;
+    }
+
+    switch (specialEffect.type) {
+
+        case "revival":
+            playRevivalEffect(resultDiv, prize, callback);
+            break;
+
+        default:
+            showResult(resultDiv, prize);
+            callback();
+            break;
+    }
+
+}
+// ================================
+// 演出抽選
+// ================================
+function rollNormalEffects(isWin) {
+
+    const result = {};
+
+    for (const effect of NORMAL_EFFECTS) {
+
+        result[effect.type] = {
+            enabled: false,
+            config: effect
+        };
+
+        if (!isWin) {
+            continue;
+        }
+
+        if (!effect.enabled) {
+            continue;
+        }
+
+        if (Math.random() * 100 < effect.chance) {
+            result[effect.type].enabled = true;
+        }
+
+    }
+
+    return result;
+
+}
+
+function rollSpecialEffect(isWin) {
+
+    if (!isWin) {
+        return null;
+    }
+
+    for (const effect of SPECIAL_EFFECTS) {
+
+        if (!effect.enabled) {
+            continue;
+        }
+
+        if (Math.random() * 100 < effect.chance) {
+            return effect;
+        }
+
+    }
+
+    return null;
+
+}
+
+// ================================
+// 音演出
+// ================================
+function playSoundEffect(effects) {
+
+    // 暗転演出中は通常音を鳴らさない
+    if (effects.flash.enabled) {
+        return;
+    }
+
+    if (!effects.sound.enabled) {
+        return;
+    }
+
+    const audio = new Audio(
+        effects.sound.config.file
+    );
+
+    audio.play().catch(() => {});
+
+}
+
+// ================================
+// 暗転演出
+// ================================
+function playFlashEffect(effects) {
+
+    if (!effects.flash.enabled) {
+        return;
+    }
+
+    const flash = document.getElementById("screen-flash");
+
+    flash.classList.add("active");
+
+    // 暗転専用SE
+    const audio = new Audio(
+        effects.flash.config.sound
+    );
+
+    audio.play().catch(() => {});
+
+    setTimeout(() => {
+
+        flash.classList.remove("active");
+
+    }, effects.flash.config.duration);
+
+}
+
+
+// ================================
+// 復活演出
+// ================================
+function playRevivalEffect(
+    resultDiv,
+    prize,
+    callback
+) {
+
+    resultDiv.innerText = "💀 はずれ 💀";
+
+    setTimeout(() => {
+
+        const flash =
+            document.getElementById("screen-flash");
+
+        flash.classList.add("active");
+
+        const audio =
+            new Audio("revival.mp3");
+
+        audio.play().catch(() => {});
+
+        setTimeout(() => {
+
+            flash.classList.remove("active");
+
+            showResult(resultDiv, prize);
+
+            callback();
+
+        }, 800);
+
+    }, 2000);
+
+}
+
+// ================================
+// 背景演出開始
+// ================================
+function applyBackgroundEffect(effects) {
+
+    if (!effects.background.enabled) {
+        return;
+    }
+
+    document.body.classList.add(
+        effects.background.config.className
+    );
+
+}
+
+// ================================
+// 背景演出終了
+// ================================
+function removeBackgroundEffect(effects) {
+
+    if (!effects.background.enabled) {
+        return;
+    }
+
+    document.body.classList.remove(
+        effects.background.config.className
+    );
+
+}
+
+// ================================
+// 演出時間
+// ================================
+function getAnimationDuration(effects) {
+
+    if (!effects.longAnimation.enabled) {
+        return 3000;
+    }
+
+    return effects.longAnimation.config.duration;
+
+}
+
+// ================================
+// シャッフル開始
+// ================================
+function startShuffle(resultDiv) {
+
+    return setInterval(() => {
+
+        const randomIndex =
+            Math.floor(Math.random() * PRIZES.length);
+
+        resultDiv.innerText =
+            PRIZES[randomIndex].name;
+
+    }, 50);
+
+}
+
+// ================================
+// シャッフル終了
+// ================================
+function stopShuffle(intervalId) {
+
+    clearInterval(intervalId);
+
+}
+
+// ================================
+// 結果表示
+// ================================
+function showResult(resultDiv, prize) {
+
+    resultDiv.classList.remove("shake");
+
+    resultDiv.innerText = prize.name;
+
+}
+
+// ================================
+// 抽選開始
+// ================================
+function startLottery() {
+
+    const btn = document.getElementById("draw-btn");
+    const resultDiv = document.getElementById("result");
+
+    btn.disabled = true;
+    resultDiv.classList.add("shake");
+
+    // 景品抽選
+    const prize = getLotteryResultData();
+
+    // 特殊演出抽選
+    const specialEffect = rollSpecialEffect(!prize.isLose);
+
+    // 通常演出がある場合だけ
+    let normalEffects = null;
+    let duration = 3000;
+
+    if (!specialEffect) {
+
+        normalEffects = rollNormalEffects(!prize.isLose);
+
+		startNormalEffects(normalEffects);
+
+        duration = getAnimationDuration(normalEffects);
+
+    }
+
+    // シャッフル開始
+    const shuffle = startShuffle(resultDiv);
+
+    setTimeout(() => {
+
+        stopShuffle(shuffle);
+
+        if (normalEffects) {
+            stopNormalEffects(normalEffects);
+        }
+
+        playSpecialEffect(
+            specialEffect,
+            resultDiv,
+            prize,
+            () => {
+                btn.disabled = false;
+            }
+        );
+
+    }, duration);
+}
+
+// ================================
+// 初期化
+// ================================
+
+createProbabilityTable();
+
+// ================================
+// 抽選シミュレーション
+// ================================
+function testLottery(count = 100000) {
+
+    const results = {};
+
+    PRIZES.forEach(prize => {
+        results[prize.name] = 0;
+    });
+
+    for (let i = 0; i < count; i++) {
+        results[getLotteryResultData().name]++;
+    }
+
+    const totalWeight =
+        PRIZES.reduce((sum, prize) => sum + prize.weight, 0);
+
+    const table = PRIZES.map(prize => ({
+        景品: prize.name,
+        重み: prize.weight,
+        期待値: (prize.weight / totalWeight * 100).toFixed(2) + "%",
+        回数: results[prize.name],
+        実測値: (results[prize.name] / count * 100).toFixed(2) + "%"
+    }));
+
+    console.table(table);
+}
+
 </script>
 
 </body>
