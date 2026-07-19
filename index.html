@@ -284,7 +284,8 @@ const SPECIAL_EFFECTS = [
     {
         type: "revival",
         enabled: true,
-        chance: 10
+        chance: 50,
+        sound: "revival.mp3"
     }
 ];
 
@@ -304,7 +305,12 @@ function playSpecialEffect(
     switch (specialEffect.type) {
 
         case "revival":
-            playRevivalEffect(resultDiv, prize, callback);
+            playRevivalEffect(
+                specialEffect,
+                resultDiv,
+                prize,
+                callback
+            );
             break;
 
         default:
@@ -312,6 +318,17 @@ function playSpecialEffect(
             callback();
             break;
     }
+}
+
+function playSpecialSound(effect) {
+
+    if (!effect.sound) {
+        return;
+    }
+
+    const audio = new Audio(effect.sound);
+
+    audio.play().catch(() => {});
 
 }
 // ================================
@@ -423,6 +440,7 @@ function playFlashEffect(effects) {
 // 復活演出
 // ================================
 function playRevivalEffect(
+    specialEffect,
     resultDiv,
     prize,
     callback
@@ -437,10 +455,7 @@ function playRevivalEffect(
 
         flash.classList.add("active");
 
-        const audio =
-            new Audio("revival.mp3");
-
-        audio.play().catch(() => {});
+        playSpecialSound(specialEffect);
 
         setTimeout(() => {
 
@@ -452,10 +467,9 @@ function playRevivalEffect(
 
         }, 800);
 
-    }, 2000);
+    }, 2500);
 
 }
-
 // ================================
 // 背景演出開始
 // ================================
