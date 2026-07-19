@@ -170,7 +170,6 @@ const PRIZES = [
 // ================================
 const revivalAudio = new Audio("revival.mp3");
 
-
 // ================================
 // 確率表を作成
 // ================================
@@ -327,6 +326,7 @@ function playSpecialEffect(
 }
 function playSpecialSound() {
 
+    revivalAudio.pause();
     revivalAudio.currentTime = 0;
 
     revivalAudio.play().catch(err => {
@@ -568,7 +568,6 @@ function startLottery() {
 
     // 特殊演出抽選
     const specialEffect = rollSpecialEffect(!prize.isLose);
-
 	if (specialEffect) {
 		setTimeout(() => {
 			btn.classList.remove("disabled");
