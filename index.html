@@ -163,6 +163,10 @@ const PRIZES = [
     { name: "💀 はずれ 💀", weight: 60.0 ,isLose: true}
 ];
 
+// ================================
+// 音声
+// ================================
+const revivalAudio = new Audio("revival.mp3");
 
 
 // ================================
@@ -319,14 +323,13 @@ function playSpecialEffect(
             break;
     }
 }
-function playSpecialSound(effect) {
+function playSpecialSound() {
 
-    if (!effect.sound) {
-        return;
-    }
+    revivalAudio.currentTime = 0;
 
-    const audio = new Audio(effect.sound);
-    audio.play().catch(() => {});
+    revivalAudio.play().catch(err => {
+        console.log(err);
+    });
 
 }
 // ================================
@@ -448,17 +451,24 @@ function playRevivalEffect(
     resultDiv.innerText = "💀 はずれ 💀";
 
 
-    const flash = document.getElementById("screen-flash");
-    flash.classList.add("active");
-
-	const audio = new Audio(specialEffect.sound); // 文字列から新しく生成
-	audio.play().catch(() => {});
-
 	setTimeout(() => {
-        flash.classList.remove("active");
-		showResult(resultDiv, prize);
-		callback();
-	}, 800);
+
+		const flash = document.getElementById("screen-flash");
+		flash.classList.add("active");
+
+		playSpecialSound();
+
+		setTimeout(() => {
+
+			flash.classList.remove("active");
+
+			showResult(resultDiv, prize);
+
+			callback();
+
+		}, 800);
+
+	}, 2500);
 }
 // ================================
 // 背景演出開始
@@ -547,6 +557,8 @@ function startLottery() {
 
     const btn = document.getElementById("draw-btn");
     const resultDiv = document.getElementById("result");
+	// Safari対策
+	revivalAudio.load();
 
     btn.disabled = true;
     resultDiv.classList.add("shake");
