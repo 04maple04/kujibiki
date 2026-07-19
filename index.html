@@ -285,7 +285,7 @@ const SPECIAL_EFFECTS = [
         type: "revival",
         enabled: true,
         chance: 50,
-        sound: new Audio("revival.mp3")
+        sound: "revival.mp3"
     }
 ];
 
@@ -433,7 +433,6 @@ function playFlashEffect(effects) {
 
 }
 
-
 // ================================
 // 復活演出
 // ================================
@@ -448,27 +447,21 @@ function playRevivalEffect(
 
     resultDiv.innerText = "💀 はずれ 💀";
 
-	setTimeout(() => {
-
-    const flash =
-        document.getElementById("screen-flash");
-
-    flash.classList.add("active");
-
-    const audio = new Audio(specialEffect.sound);
-    audio.play().catch(() => {});
-
     setTimeout(() => {
 
-        flash.classList.remove("active");
+        const flash = document.getElementById("screen-flash");
+        flash.classList.add("active");
 
-        showResult(resultDiv, prize);
+		const audio = new Audio(specialEffect.sound); // 文字列から新しく生成
+		audio.play().catch(() => {});
 
-        callback();
+        setTimeout(() => {
+            flash.classList.remove("active");
+            showResult(resultDiv, prize);
+            callback();
+        }, 800);
 
-		}, 800);
-
-	}, 2500);
+    }, 2500);
 }
 // ================================
 // 背景演出開始
