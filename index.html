@@ -284,8 +284,8 @@ const SPECIAL_EFFECTS = [
     {
         type: "revival",
         enabled: true,
-        chance: 10,
-        sound: "revival.mp3"
+        chance: 50,
+        sound: new Audio("revival.mp3")
     }
 ];
 
@@ -327,7 +327,6 @@ function playSpecialSound(effect) {
     }
 
     effect.sound.currentTime = 0;
-
     effect.sound.play().catch(() => {});
 
 }
