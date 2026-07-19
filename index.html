@@ -285,7 +285,7 @@ const SPECIAL_EFFECTS = [
         type: "revival",
         enabled: true,
         chance: 50,
-        sound: new Audio("revival.mp3")
+        sound: "flash.mp3"
     }
 ];
 
@@ -445,6 +445,9 @@ function playRevivalEffect(
     callback
 ) {
 
+    // シャッフル終了後は揺れを止める
+    resultDiv.classList.remove("shake");
+
     resultDiv.innerText = "💀 はずれ 💀";
 
     setTimeout(() => {
@@ -454,7 +457,12 @@ function playRevivalEffect(
 
         flash.classList.add("active");
 
-        playSpecialSound(specialEffect);
+         // 暗転専用SE
+		const audio = new Audio(
+			effects.flash.config.sound
+		);
+
+		audio.play().catch(() => {});
 
         setTimeout(() => {
 
@@ -467,7 +475,6 @@ function playRevivalEffect(
         }, 800);
 
     }, 2500);
-
 }
 // ================================
 // 背景演出開始
