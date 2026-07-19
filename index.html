@@ -319,15 +319,14 @@ function playSpecialEffect(
             break;
     }
 }
-
 function playSpecialSound(effect) {
 
     if (!effect.sound) {
         return;
     }
 
-    effect.sound.currentTime = 0;
-    effect.sound.play().catch(() => {});
+    const audio = new Audio(effect.sound);
+    audio.play().catch(() => {});
 
 }
 // ================================
@@ -444,37 +443,32 @@ function playRevivalEffect(
     prize,
     callback
 ) {
-
     // シャッフル終了後は揺れを止める
     resultDiv.classList.remove("shake");
 
     resultDiv.innerText = "💀 はずれ 💀";
 
+	setTimeout(() => {
+
+    const flash =
+        document.getElementById("screen-flash");
+
+    flash.classList.add("active");
+
+    const audio = new Audio(specialEffect.sound);
+    audio.play().catch(() => {});
+
     setTimeout(() => {
 
-        const flash =
-            document.getElementById("screen-flash");
+        flash.classList.remove("active");
 
-        flash.classList.add("active");
+        showResult(resultDiv, prize);
 
-         // 暗転専用SE
-		const audio = new Audio(
-			effects.flash.config.sound
-		);
+        callback();
 
-		audio.play().catch(() => {});
+		}, 800);
 
-        setTimeout(() => {
-
-            flash.classList.remove("active");
-
-            showResult(resultDiv, prize);
-
-            callback();
-
-        }, 800);
-
-    }, 2500);
+	}, 2500);
 }
 // ================================
 // 背景演出開始
