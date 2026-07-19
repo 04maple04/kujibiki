@@ -32,13 +32,15 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        button:hover {
-            background-color: #e84118;
-        }
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
+		button:disabled {
+			background-color: #ff4757;
+			cursor: not-allowed;
+		}
+
+		button.disabled,
+		button.disabled:hover {
+			background-color: #ccc;
+		}
         #result {
             margin-top: 30px;
             font-size: 32px;
@@ -288,7 +290,7 @@ const SPECIAL_EFFECTS = [
     {
         type: "revival",
         enabled: true,
-        chance: 50,
+        chance: 10,
         sound: "revival.mp3"
     }
 ];
@@ -445,30 +447,29 @@ function playRevivalEffect(
     prize,
     callback
 ) {
-    // シャッフル終了後は揺れを止める
     resultDiv.classList.remove("shake");
-
     resultDiv.innerText = "💀 はずれ 💀";
 
+    const btn = document.getElementById("draw-btn");
 
-	setTimeout(() => {
+    setTimeout(() => {
 
-		const flash = document.getElementById("screen-flash");
-		flash.classList.add("active");
+        const flash = document.getElementById("screen-flash");
+        flash.classList.add("active");
 
-		playSpecialSound();
+        playSpecialSound();
 
-		setTimeout(() => {
+        setTimeout(() => {
 
-			flash.classList.remove("active");
+            flash.classList.remove("active");
 
-			showResult(resultDiv, prize);
+            showResult(resultDiv, prize);
 
-			callback();
+            callback();
 
-		}, 800);
+        }, 800);
 
-	}, 2500);
+    }, 2500);
 }
 // ================================
 // 背景演出開始
@@ -557,10 +558,9 @@ function startLottery() {
 
     const btn = document.getElementById("draw-btn");
     const resultDiv = document.getElementById("result");
-	// Safari対策
-	revivalAudio.load();
 
-    btn.disabled = true;
+	btn.disabled = true;
+	btn.classList.add("disabled");
     resultDiv.classList.add("shake");
 
     // 景品抽選
@@ -569,6 +569,11 @@ function startLottery() {
     // 特殊演出抽選
     const specialEffect = rollSpecialEffect(!prize.isLose);
 
+	if (specialEffect) {
+		setTimeout(() => {
+			btn.classList.remove("disabled");
+		}, 3000);
+	}
     // 通常演出がある場合だけ
     let normalEffects = null;
     let duration = 3000;
@@ -593,16 +598,15 @@ function startLottery() {
         if (normalEffects) {
             stopNormalEffects(normalEffects);
         }
-
-        playSpecialEffect(
-            specialEffect,
-            resultDiv,
-            prize,
-            () => {
-                btn.disabled = false;
-            }
-        );
-
+		playSpecialEffect(
+			specialEffect,
+			resultDiv,
+			prize,
+			() => {
+				btn.disabled = false;
+				btn.classList.remove("disabled");
+			}
+		);
     }, duration);
 }
 
@@ -610,6 +614,7 @@ function startLottery() {
 // 初期化
 // ================================
 
+revivalAudio.load();
 createProbabilityTable();
 
 // ================================
