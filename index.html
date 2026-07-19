@@ -555,10 +555,20 @@ function showResult(resultDiv, prize) {
 // 抽選開始
 // ================================
 function startLottery() {
-    revivalAudio.load();
+
     const btn = document.getElementById("draw-btn");
     const resultDiv = document.getElementById("result");
 
+    // Safari対策
+    revivalAudio.muted = true;
+    revivalAudio.play()
+    .then(() => {
+        revivalAudio.pause();
+        revivalAudio.currentTime = 0;
+        revivalAudio.muted = false;
+    })
+    .catch(() => {});
+	
 	btn.disabled = true;
 	btn.classList.add("disabled");
     resultDiv.classList.add("shake");
@@ -612,8 +622,7 @@ function startLottery() {
 // ================================
 // 初期化
 // ================================
-
-
+revivalAudio.load();
 createProbabilityTable();
 
 // ================================
