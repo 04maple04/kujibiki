@@ -555,7 +555,7 @@ function showResult(resultDiv, prize) {
 // 抽選開始
 // ================================
 function startLottery() {
-
+    revivalAudio.load();
     const btn = document.getElementById("draw-btn");
     const resultDiv = document.getElementById("result");
 
@@ -613,7 +613,7 @@ function startLottery() {
 // 初期化
 // ================================
 
-revivalAudio.load();
+
 createProbabilityTable();
 
 // ================================
