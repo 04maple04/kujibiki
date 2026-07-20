@@ -1,1 +1,110 @@
+body {
+	font-family: 'Helvetica Neue', Arial, sans-serif;
+	text-align: center;
+	background: linear-gradient(135deg, #74b9ff, #a29bfe);
+	padding: 50px 20px; 
+	margin: 0;
+	box-sizing: border-box;
+}
+.container {
+	background: white;
+	padding: 30px;
+	border-radius: 10px;
+	box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+	max-width: 400px;
+	margin: 0 auto;
+	box-sizing: border-box; 
+}
+button {
+	background-color: #ff4757;
+	color: white;
+	border: none;
+	padding: 15px 30px;
+	font-size: 18px;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: 0.2s;
+}
+button:disabled {
+	background-color: #ff4757;
+	cursor: not-allowed;
+}
 
+button.disabled,
+button.disabled:hover {
+	background-color: #ccc;
+}
+#result {
+	margin-top: 30px;
+	font-size: 32px;
+	font-weight: bold;
+	color: #2f3542;
+	min-height: 48px;
+	transition: transform 0.1s;
+}
+.shake {
+	animation: blink 0.1s infinite alternate;
+}
+@keyframes blink {
+	0% { opacity: 0.5; transform: scale(0.95); }
+	100% { opacity: 1; transform: scale(1.05); }
+}
+.probability-info {
+	margin-top: 20px;
+	font-size: 14px;
+	color: #747d8c;
+	text-align: left;
+}
+.probability-info table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 10px;
+}
+.probability-info th, .probability-info td {
+	border-bottom: 1px solid #ddd;
+	padding: 8px;
+	text-align: left;
+}
+
+.bg-red {
+	background: linear-gradient(135deg,#ff0000,#ffff00);
+}
+
+.bg-blue {
+	background: linear-gradient(135deg,#00ffff,#0000ff);
+}
+
+.bg-purple {
+	background: linear-gradient(135deg,#ff00ff,#8000ff);
+}
+
+.bg-green {
+	background: linear-gradient(135deg,#00ff00,#ffff00);
+}
+
+#screen-flash {
+position: fixed;
+inset: 0;
+background: black;
+opacity: 0;
+pointer-events: none;
+z-index: 9999;
+transition: opacity 0.1s;
+}
+
+#screen-flash.active {
+	opacity: 1.0;
+}
+
+/* スマホ用の調整（画面幅が480px以下のとき） */
+@media (max-width: 480px) {
+	body {
+		padding: 20px 10px; /* 上下20px、左右10pxに縮小 */
+	}
+	.container {
+		padding: 20px 15px; /* 左右の余白を15pxにして中身の幅を確保 */
+	}
+	#result {
+		font-size: 26px; /* 文字が大きすぎてはみ出る場合はここを少し小さく調整 */
+	}
+}
