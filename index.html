@@ -72,22 +72,23 @@
             padding: 8px;
             text-align: left;
         }
-		.special-background {
-			animation: specialFlash 0.4s infinite alternate;
-		}
-
-		@keyframes specialFlash {
-
-			0% {
-				background: linear-gradient(135deg,#ff0000,#ffff00);
-			}
-
-			100% {
-				background: linear-gradient(135deg,#00ffff,#0000ff);
-			}
-
-		}
 		
+		.bg-red {
+			background: linear-gradient(135deg,#ff0000,#ffff00);
+		}
+
+		.bg-blue {
+			background: linear-gradient(135deg,#00ffff,#0000ff);
+		}
+
+		.bg-purple {
+			background: linear-gradient(135deg,#ff00ff,#8000ff);
+		}
+
+		.bg-green {
+			background: linear-gradient(135deg,#00ff00,#ffff00);
+		}
+
 		#screen-flash {
 		position: fixed;
 		inset: 0;
@@ -265,6 +266,18 @@ const NORMAL_EFFECTS = [
         sound: "flash.mp3"
     }
 ];
+
+// ================================
+// 背景色演出用
+// ================================
+const BACKGROUND_CLASSES = [
+    "bg-red",
+    "bg-blue",
+    "bg-purple",
+    "bg-green"
+];
+
+let backgroundTimer = null;
 
 function startNormalEffects(effects) {
 
@@ -480,12 +493,27 @@ function applyBackgroundEffect(effects) {
         return;
     }
 
-    document.body.classList.add(
-        effects.background.config.className
-    );
+	let currentIndex =
+		Math.floor(Math.random() * BACKGROUND_CLASSES.length);
 
+	document.body.classList.add(BACKGROUND_CLASSES[currentIndex]);
+
+	backgroundTimer = setInterval(() => {
+
+		document.body.classList.remove(BACKGROUND_CLASSES[currentIndex]);
+
+		let nextIndex;
+
+		do {
+			nextIndex = Math.floor(Math.random() * BACKGROUND_CLASSES.length);
+		} while (nextIndex === currentIndex);
+
+		currentIndex = nextIndex;
+
+		document.body.classList.add(BACKGROUND_CLASSES[currentIndex]);
+
+	}, 400);
 }
-
 // ================================
 // 背景演出終了
 // ================================
@@ -495,10 +523,11 @@ function removeBackgroundEffect(effects) {
         return;
     }
 
-    document.body.classList.remove(
-        effects.background.config.className
-    );
+    clearInterval(backgroundTimer);
 
+    BACKGROUND_CLASSES.forEach(cls => {
+        document.body.classList.remove(cls);
+    });
 }
 
 // ================================
