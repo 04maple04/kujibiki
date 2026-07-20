@@ -23,7 +23,7 @@ const PRIZES = [
 // ================================
 // 音声
 // ================================
-const revivalAudio = new Audio("revival.mp3");
+const revivalAudio = new Audio("audio/revival.mp3");
 
 // ================================
 // 演出設定
@@ -37,7 +37,7 @@ const NORMAL_EFFECTS = [
         type: "sound",
         enabled: true,
         chance: 40,
-        file: "bare.mp3"
+        file: "audio/bare.mp3"
     },
     {
         type: "longAnimation",
@@ -56,7 +56,7 @@ const NORMAL_EFFECTS = [
         enabled: true,
         chance: 30,
         duration: 2000,
-        sound: "flash.mp3"
+        sound: "audio/flash.mp3"
     }
 ];
 
