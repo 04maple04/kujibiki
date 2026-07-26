@@ -36,7 +36,7 @@ const NORMAL_EFFECTS = [
     {
         type: "sound",
         enabled: true,
-        chance: 40,
+        chance: 30,
         file: "audio/bare.mp3"
     },
     {
