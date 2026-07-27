@@ -136,7 +136,7 @@ function playRevivalEffect(
 
             callback();
 
-        }, 800);
+        }, 1500);
 
     }, 1500);
 }
