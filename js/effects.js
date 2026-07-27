@@ -121,27 +121,26 @@ function playRevivalEffect(
 
     const btn = document.getElementById("draw-btn");
 
-	setTimeout(() => {
+    setTimeout(() => {
 
-		const flash = document.getElementById("screen-flash");
-		flash.classList.add("active");
+        const flash = document.getElementById("screen-flash");
+        flash.classList.add("active");
 
-		setTimeout(() => {
-			playSpecialSound();
-		}, 500);
+        playSpecialSound();
 
-		setTimeout(() => {
+        setTimeout(() => {
 
-			flash.classList.remove("active");
+            flash.classList.remove("active");
 
-			showResult(resultDiv, prize);
+            showResult(resultDiv, prize);
 
-			callback();
+            callback();
 
-		}, 1800);
+        }, 800);
 
-	}, 2000);
+    }, 1500);
 }
+
 
 // ================================
 // 背景演出開始
