@@ -157,57 +157,62 @@ function stopShuffle(intervalId) {
 // ================================
 function startLottery() {
 
-    const btn = document.getElementById("draw-btn");
-    const resultDiv = document.getElementById("result");
+    const btn = document.getElementById("draw-btn");
+    const resultDiv = document.getElementById("result");
 
-	btn.disabled = true;
-	btn.classList.add("disabled");
-    resultDiv.classList.add("shake");
+    btn.disabled = true;
+    btn.classList.add("disabled");
+    resultDiv.classList.add("shake");
 
-    // 景品抽選
-    const prize = getLotteryResultData();
+    // 景品抽選
+    const prize = getLotteryResultData();
 
-    // 特殊演出抽選
-    const specialEffect = rollSpecialEffect(!prize.isLose);
-	if (specialEffect) {
-		setTimeout(() => {
-			btn.classList.remove("disabled");
-		}, 3000);
-	}
-    // 通常演出がある場合だけ
-    let normalEffects = null;
-    let duration = 3000;
+    // 特殊演出抽選
+    const specialEffect = rollSpecialEffect(!prize.isLose);
+    if (specialEffect) {
+        setTimeout(() => {
+            btn.classList.remove("disabled");
+        }, 3000);
+    }
+    // 通常演出がある場合だけ
+    let normalEffects = null;
+    let duration = 3000;
 
-    if (!specialEffect) {
+    if (!specialEffect) {
 
-        normalEffects = rollNormalEffects(!prize.isLose);
+        normalEffects = rollNormalEffects(!prize.isLose);
 
-		startNormalEffects(normalEffects);
+        startNormalEffects(normalEffects);
 
-        duration = getAnimationDuration(normalEffects);
+        duration = getAnimationDuration(normalEffects);
 
-    }
+    }
 
-    // シャッフル開始
-    const shuffle = startShuffle(resultDiv);
+    // シャッフル開始
+    const shuffle = startShuffle(resultDiv);
 
-    setTimeout(() => {
+    setTimeout(() => {
 
-        stopShuffle(shuffle);
+        stopShuffle(shuffle);
 
-        if (normalEffects) {
-            stopNormalEffects(normalEffects);
-        }
-		playSpecialEffect(
-			specialEffect,
-			resultDiv,
-			prize,
-			() => {
-				btn.disabled = false;
-				btn.classList.remove("disabled");
-			}
-		);
-    }, duration);
+        if (normalEffects) {
+            stopNormalEffects(normalEffects);
+        }
+
+        playSpecialEffect(
+            specialEffect,
+            resultDiv,
+            prize,
+            () => {
+                btn.disabled = false;
+                btn.classList.remove("disabled");
+
+                setTimeout(() => {
+                    window.location.href = "https://stock-manager-nine-eta.vercel.app/";
+                }, 2000);
+            }
+        );
+    }, duration);
 }
 
 // ================================
