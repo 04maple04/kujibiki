@@ -27,23 +27,32 @@ function playSpecialEffect(
         callback();
         return;
     }
+	
+	switch (specialEffect.type) {
 
-    switch (specialEffect.type) {
+		case "revival":
+			playRevivalEffect(
+				specialEffect,
+				resultDiv,
+				prize,
+				callback
+			);
+			break;
 
-        case "revival":
-            playRevivalEffect(
-                specialEffect,
-                resultDiv,
-                prize,
-                callback
-            );
-            break;
+		case "secretResult":
+			playSecretResultEffect(
+				specialEffect,
+				resultDiv,
+				prize,
+				callback
+			);
+			break;
 
-        default:
-            showResult(resultDiv, prize);
-            callback();
-            break;
-    }
+		default:
+			showResult(resultDiv, prize);
+			callback();
+			break;
+	}
 }
 
 // ================================
@@ -141,6 +150,31 @@ function playRevivalEffect(
     }, 1500);
 }
 
+// ================================
+// 別ページ結果表示演出
+// ================================
+function playSecretResultEffect(
+    specialEffect,
+    resultDiv,
+    prize,
+    callback
+) {
+
+    // 画面には「はずれ」と表示
+    resultDiv.classList.remove("shake");
+    resultDiv.innerText = "💀 はずれ 💀";
+
+    // 2秒後に別ページへ移動
+	setTimeout(() => {
+
+		const resultUrl =
+			"result.html?result=" +
+			encodeURIComponent(prize.name);
+
+		window.location.href = resultUrl;
+
+	}, 2000);
+}
 
 // ================================
 // 背景演出開始

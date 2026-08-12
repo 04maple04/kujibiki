@@ -80,6 +80,11 @@ const SPECIAL_EFFECTS = [
         enabled: true,
         chance: 15,
         sound: "revival.mp3"
+    },
+    {
+        type: "secretResult",
+        enabled: true,
+        chance: 70
     }
 ];
 
