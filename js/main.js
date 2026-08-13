@@ -12,3 +12,19 @@ document.getElementById("draw-btn").addEventListener("click", () => {
 }, { once: true });
 revivalAudio.load();
 createProbabilityTable();
+
+// ================================
+// ページ復帰時のボタン状態リセット
+// ================================
+window.addEventListener("pageshow", () => {
+
+    const btn = document.getElementById("draw-btn");
+
+    if (!btn) {
+        return;
+    }
+
+    btn.disabled = false;
+    btn.classList.remove("disabled");
+
+});
