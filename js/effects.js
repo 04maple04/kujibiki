@@ -27,11 +27,20 @@ function playSpecialEffect(
         callback();
         return;
     }
-	
+
 	switch (specialEffect.type) {
 
 		case "revival":
 			playRevivalEffect(
+				specialEffect,
+				resultDiv,
+				prize,
+				callback
+			);
+			break;
+
+		case "secretResult":
+			playSecretResultEffect(
 				specialEffect,
 				resultDiv,
 				prize,
@@ -141,6 +150,33 @@ function playRevivalEffect(
     }, 1500);
 }
 
+// ================================
+// 結果表示演出
+// ================================
+function playSecretResultEffect(
+    specialEffect,
+    resultDiv,
+    prize,
+    callback
+) {
+
+    resultDiv.classList.remove("shake");
+
+    // はずれ表示
+    resultDiv.innerText = "💀 はずれ 💀";
+
+    // 2秒後に結果表示サイトへ
+    setTimeout(() => {
+
+        const resultUrl =
+            "https://result-murex-chi.vercel.app/" +
+            "?result=" +
+            encodeURIComponent(prize.name);
+
+        window.location.href = resultUrl;
+
+    }, 2000);
+}
 
 // ================================
 // 背景演出開始
