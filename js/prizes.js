@@ -84,7 +84,7 @@ const SPECIAL_EFFECTS = [
     {
         type: "secretResult",
         enabled: true,
-        chance: 80
+        chance: 40
     }
 ];
 
