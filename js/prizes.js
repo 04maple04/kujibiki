@@ -10,7 +10,7 @@ const PRIZES = [
     { name: "青単色を2倍", weight: 3.0,isLose: false },
     { name: "お互い追加2枚", weight: 3.0,isLose: false },
     { name: "同値の場合貫通", weight: 3.0,isLose: false },
-    { name: "鬼タイム", weight: 3.0,isLose: false },
+    { name: "千の位で四捨五入", weight: 3.0,isLose: false },
     { name: "ハイパーモード", weight: 3.0,isLose: false },
     { name: "コスト×1000", weight: 3.0,isLose: false },
     { name: "プラス効果参照", weight: 3.0,isLose: false },
