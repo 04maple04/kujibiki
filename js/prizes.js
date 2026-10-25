@@ -36,25 +36,25 @@ const NORMAL_EFFECTS = [
     {
         type: "sound",
         enabled: true,
-        chance: 30,
+        chance: 26,
         file: "audio/bare.mp3"
     },
     {
         type: "longAnimation",
         enabled: true,
-        chance: 30,
+        chance: 26,
         duration: 6000
     },
     {
         type: "background",
         enabled: true,
-        chance: 30,
+        chance: 26,
         className: "special-background"
     },
     {
         type: "flash",
         enabled: true,
-        chance: 30,
+        chance: 26,
         duration: 2000,
         sound: "audio/flash.mp3"
     }
@@ -78,13 +78,13 @@ const SPECIAL_EFFECTS = [
     {
         type: "revival",
         enabled: true,
-        chance: 15,
+        chance: 10,
         sound: "revival.mp3"
     },
     {
         type: "secretResult",
         enabled: true,
-        chance: 40
+        chance: 12
     }
 ];
 
