@@ -78,13 +78,13 @@ const SPECIAL_EFFECTS = [
     {
         type: "revival",
         enabled: true,
-        chance: 10,
+        chance: 33,
         sound: "revival.mp3"
     },
     {
         type: "secretResult",
         enabled: true,
-        chance: 12
+        chance: 50
     }
 ];
 
