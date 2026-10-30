@@ -5,7 +5,7 @@ const PRIZES = [
     { name: "赤単色を2倍", weight: 2.0,isLose: false },
     { name: "黒単色を2倍", weight: 2.0,isLose: false },
     { name: "多色を2倍", weight: 2.0,isLose: false },
-    { name: "年数×1000", weight: 2.0,isLose: false },
+    { name: "ブロッカーを2倍", weight: 2.0,isLose: false },
     { name: "Sトリガーなら2倍", weight: 2.0,isLose: false },
     { name: "青単色を2倍", weight: 3.0,isLose: false },
     { name: "お互い追加2枚", weight: 3.0,isLose: false },
@@ -13,10 +13,10 @@ const PRIZES = [
     { name: "千の位で四捨五入", weight: 3.0,isLose: false },
     { name: "ハイパーモード", weight: 3.0,isLose: false },
     { name: "コスト×1000", weight: 3.0,isLose: false },
-    { name: "プラス効果参照", weight: 3.0,isLose: false },
-    { name: "マイナス効果参照", weight: 3.0,isLose: false },
+    { name: "パワー増減効果発動", weight: 3.0,isLose: false },
+    { name: "名前のルビ数×1000", weight: 3.0,isLose: false },
     { name: "カード交換", weight: 3.0,isLose: false },
-    { name: "ヨビ二オンなら追加1枚", weight: 3.0,isLose: false },
+    { name: "年数×1000", weight: 3.0,isLose: false },
     { name: "💀 はずれ 💀", weight: 60.0 ,isLose: true}
 ];
 
