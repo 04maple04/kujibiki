@@ -37,7 +37,10 @@ const NORMAL_EFFECTS = [
         type: "sound",
         enabled: true,
         chance: 26,
-        file: "audio/bare.mp3"
+        files: [
+            "audio/bare1.mp3",
+            "audio/bare2.mp3"
+        ]
     },
     {
         type: "longAnimation",
