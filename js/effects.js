@@ -58,6 +58,9 @@ function playSpecialEffect(
 // ================================
 // 音演出
 // ================================
+// ================================
+// 音演出
+// ================================
 function playSoundEffect(effects) {
 
     // 暗転演出中は通常音を鳴らさない
@@ -69,9 +72,13 @@ function playSoundEffect(effects) {
         return;
     }
 
-    const audio = new Audio(
-        effects.sound.config.file
-    );
+    // 2種類の音声からランダムに選択
+    const files = effects.sound.config.files;
+
+    const randomFile =
+        files[Math.floor(Math.random() * files.length)];
+
+    const audio = new Audio(randomFile);
 
     audio.play().catch(() => {});
 
